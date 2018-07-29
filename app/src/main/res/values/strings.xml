@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">Shary</string>
+    <string name="share">Delen</string>
+    <string name="shared_with_me">Gedeeld met mij</string>
+    <string name="shary_share">Shary | Delen</string>
+    <string name="home">Home</string>
+    <string name="responsible_disclosure">Responsible Disclosure: https://shary.z3r0byteapps.eu/responsible-disclosure.html</string>
+    <string name="welcome">Welkom bij Shary</string>
+    <string name="shary_description">Met Shary kun je de toegang tot je magister account aan iemand geven zonder dat je hem of haar daarvoor jouw wachtwoord hoeft te geven. Daarnaast kies jij zelf wat die peroon kan zien. Wil je dus dat die persoon alleen je cijfers kan zien, dan kun je dat instellen. Daarnaast kun je met deze app ook de accounts van mensen bekijken die hun toegang met jou gedeeld hebben. Open het menu links hiervan om te beginnen met delen of bekijken.</string>
+    <string name="shary_shared_with_me">Shary | Gedeeld met mij</string>
+    <string name="login">Inloggen</string>
+    <string name="agree_first">Je moet eerst akkoord gaan</string>
+    <string name="privacy_policy_intro">Sorry, maar het moet nou eenmaal: voordat je door kan gaan moet je akkoord gaan met ons privacybeleid:</string>
+    <string name="privacypolicy">Privacybeleid</string>
+    <string name="privacy_policy_agree">Ik heb het privacybeleid gelezen en ga er mee akkoord.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_first">Je moet eerst inloggen</string>
+    <string name="wait_till_done">Wacht tot alles klaar is</string>
+    <string name="no_results">Geen resultaten</string>
+    <string name="searching">Zoeken...</string>
+    <string name="search">Zoek</string>
+    <string name="school_selected">Geselecteerde school:</string>
+    <string name="manual_school_title">School handmatig invoeren</string>
+    <string name="manual_school_desc">Voer de url van de school handmatig in. Voer alleen het gedeelte voor .magister.net in. Vb: Als de url van je school https://commanderij.magister.net is, voer je alleen commanderij in.</string>
+    <string name="your_password_title">Je wachtwoord</string>
+    <string name="your_password_desc">Zometeen ga je inloggen met je Magister account, dit is nodig om je toegang tot je account te kunnen delen. Jouw inloggevens worden NIET naar onze servers gestuurd, alleen naar die van Magister! In plaats daarvan slaan we je sessie-id op op onze server. Hiermee kunnen we data opvragen uit je magister account om het te kunnen delen. De voordelen hiervan zijn: jij kunt de toegang elk moment via de app intrekken; wij weten jouw wachtwoord (en gebruikersnaam) niet en kunnen die dan ook niet aanpassen; in het geval van een hack is je wachtwoord nog steeds veilig aangezien deze nergens opgeslagen wordt.</string>
+    <string name="important">Belangrijk</string>
+    <string name="valid_session_desc">Om te zorgen dat je gedeelde toegang geldig blijft stuurt de app elke dag een nieuwe sessie naar onze servers. Indien je de app verwijdert zijn je shares daarna nog maximaal 30 dagen geldig. Daarna kunnen wij simpelweg niet meer van jouw account informatie ophalen.</string>
+    <string name="confirm_url_title">URL bevestigen</string>
+    <string name="confirm_url_desc">Je hebt %1$s ingevoerd, is https://%2$s.magister.net de URL van jouw school? Let op: Als je de verkeerde URL hebt ingevoerd, kun je niet inloggen!</string>
+    <string name="search_school_hint">(Een deel van) de naam/URL van je school</string>
+    <string name="search_school">School zoeken</string>
+    <string name="choose_school_first">Kies eerst een school</string>
+    <string name="logged_in">Ingelogd</string>
+    <string name="logging_in">Inloggen...</string>
+    <string name="err_no_connection">Geen verbinding</string>
+    <string name="invalid_credentials">Verkeerde gebruikersnaam en/of wachtwoord</string>
+    <string name="unknown_error">Onbekende fout</string>
+    <string name="last_steps">Laatste stappen</string>
+    <string name="logging_in_at_magister">Inloggen bij Magister</string>
+    <string name="loading_profile">Profiel ophalen</string>
+    <string name="generating_id_token">Identificatie-token aanmaken</string>
+    <string name="adding_user_shary">Gebruiker aanmaken bij Shary</string>
+    <string name="waiting_for_verification">Wachten op verificatie</string>
+    <string name="done">Klaar!</string>
+    <string name="start">Start</string>
+    <string name="an_error_occured_try_again">Er is een fout opgetreden, probeer het opnieuw</string>
+    <string name="you_have_not_shared_yet">Je hebt nog niks gedeeld. Druk op de knop onderin om te beginnen met delen.</string>
+    <string name="lets_start">Laten we beginnen...</string>
+    <string name="login_before_sharing">Voordat je kunt beginnen met het delen, moet je eerst inloggen met je Magister account</string>
+    <string name="retry">Opnieuw</string>
+    <string name="new_share">Nieuwe share</string>
+    <string name="cancel">Annuleren</string>
+    <string name="send_link">Link versturen</string>
+    <string name="expires_format">Verloopt: %1$s</string>
+    <string name="restrictions_format">Restricties: %1$s</string>
+    <string name="expired">verlopen</string>
+    <string name="active">actief</string>
+    <string name="revoke_share_title">Share intrekken?</string>
+    <string name="revoke_share_desc">Weet je zeker dat je de toegang tot deze share wilt intrekken?</string>
+    <string name="yes">ja</string>
+    <string name="none">geen</string>
+    <string name="update">Updaten</string>
+    <string name="share_revoked">Share ingetrokken</string>
+    <string name="share_updated">Share aangepast</string>
+    <array name="share_types">
+        <item>Agenda</item>
+        <item>Nieuwe cijfers</item>
+        <item>Cijfers</item>
+    </array>
+</resources>

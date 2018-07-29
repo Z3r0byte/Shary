@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="false"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp"
+        android:gravity="center_horizontal"
+        android:text="@string/search_school"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textColor="#fff" />
+
+    <EditText
+        android:id="@+id/edit_text_search_school"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/search_school_hint"
+        android:singleLine="true"
+        android:textColor="#fff" />
+
+
+    <Button
+        android:id="@+id/button_search_school"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/search" />
+
+    <ListView
+        android:id="@+id/list_schools"
+        style="@style/AppThemeDark"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" />
+
+</LinearLayout>
