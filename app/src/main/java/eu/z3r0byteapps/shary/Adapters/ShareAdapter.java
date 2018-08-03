@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Bas van den Boom 'Z3r0byte'
+ * Copyright (c) 2018-2018 Bas van den Boom 'Z3r0byte'
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -90,13 +90,9 @@ public class ShareAdapter extends ArrayAdapter<Share> implements DatePickerDialo
         TextView status = rowView.findViewById(R.id.status);
 
         String titleStr = "Fout: geen type";
-        if (values[position].getType().getID() == 1) {
-            titleStr = "Agenda";
-        } else if (values[position].getType().getID() == 2) {
-            titleStr = "Nieuwe cijfers";
-        } else if (values[position].getType().getID() == 3) {
-            titleStr = "Cijfers";
-        }
+        String[] types = context.getResources().getStringArray(R.array.share_types);
+        if (values[position].getType() != null)
+            titleStr = types[values[position].getType().getID() - 1];
         title.setText(titleStr);
 
         if (values[position].getComment().isEmpty()) {

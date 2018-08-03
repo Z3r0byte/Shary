@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Bas van den Boom 'Z3r0byte'
+ * Copyright (c) 2018-2018 Bas van den Boom 'Z3r0byte'
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
-import java.text.ParseException;
 
 import agency.tango.materialintroscreen.SlideFragment;
 import eu.z3r0byteapps.shary.MagisterLibrary.Magister;
@@ -123,7 +122,7 @@ public class Setup extends SlideFragment {
         User user = new Gson().fromJson(configUtil.getString("User"), User.class);
         try {
             return Magister.login(school, user.username, user.password);
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             return null;
         }
     }

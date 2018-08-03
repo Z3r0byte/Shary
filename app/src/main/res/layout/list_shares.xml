@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016-2018 Bas van den Boom 'Z3r0byte'
+  ~ Copyright (c) 2018-2018 Bas van den Boom 'Z3r0byte'
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -55,15 +55,15 @@
                 android:id="@+id/comment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:maxLines="3"
                 android:singleLine="false"
                 android:text="Omschrijving"
-                app:layout_constraintEnd_toStartOf="@+id/expires"
+                app:layout_constraintEnd_toStartOf="@+id/restrictions"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/title" />
 
@@ -72,14 +72,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="Geen restricties"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/comment"
                 app:layout_constraintTop_toBottomOf="@+id/title" />
 
             <TextView
