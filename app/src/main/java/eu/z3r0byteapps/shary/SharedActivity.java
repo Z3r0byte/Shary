@@ -19,13 +19,16 @@ package eu.z3r0byteapps.shary;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.GsonBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -40,14 +43,50 @@ import eu.z3r0byteapps.shary.MagisterLibrary.util.LogUtil;
 import eu.z3r0byteapps.shary.SharyLibrary.Result;
 import eu.z3r0byteapps.shary.SharyLibrary.Share;
 import eu.z3r0byteapps.shary.SharyLibrary.Urls;
+import eu.z3r0byteapps.shary.Util.ShareDatabase;
+import tr.xip.errorview.ErrorView;
 
 public class SharedActivity extends AppCompatActivity {
     private static final String TAG = "SharedActivity";
+
+    ShareDatabase shareDatabase;
+
+    ListView listView;
+    ErrorView errorView;
+    ProgressBar loading;
+
+    String secret;
+
+    ConstraintLayout nothing_shared_layout;
+    ConstraintLayout loading_layout;
+    ConstraintLayout shares_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shared);
+
+
+        errorView = findViewById(R.id.error);
+        loading = findViewById(R.id.progress);
+        listView = findViewById(R.id.list);
+
+        loading_layout = findViewById(R.id.loading);
+        shares_layout = findViewById(R.id.shares_list);
+        nothing_shared_layout = findViewById(R.id.nothing_shared);
+
+        findViewById(R.id.add_share).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addManualShare();
+            }
+        });
+        findViewById(R.id.add_share2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addManualShare();
+            }
+        });
 
         Intent intent = getIntent();
         final Uri data = intent.getData();
@@ -59,6 +98,7 @@ public class SharedActivity extends AppCompatActivity {
                     .input("Cijfers van Bart", null, new MaterialDialog.InputCallback() {
                         @Override
                         public void onInput(MaterialDialog dialog, CharSequence input) {
+                            if (input.toString().isEmpty()) input = "Naamloos";
                             addShare(data.getLastPathSegment(), input.toString());
                         }
                     }).show();
@@ -97,8 +137,46 @@ public class SharedActivity extends AppCompatActivity {
                     }
                 })
                 .build();
+
+        shareDatabase = new ShareDatabase(this);
+
+        getShares();
     }
 
+
+    private void addManualShare() {
+        new MaterialDialog.Builder(this)
+                .title("Share toevoegen")
+                .content("Voer hieronder een beschrijving van de share in zodat je weet welke share dit is")
+                .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI)
+                .alwaysCallInputCallback()
+                .input("URL van de share: https://shary.z3r0byteapps.eu/view/share/...", null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        if (!input.toString().trim().startsWith("https://shary.z3r0byteapps.eu/view/share/") ||
+                                input.toString().trim().replace("https://shary.z3r0byteapps.eu/view/share/", "").length() != 64) {
+                            dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+                            return;
+                        }
+                        if (dialog.getActionButton(DialogAction.POSITIVE).isEnabled()) {
+                            secret = input.toString().trim().replace("https://shary.z3r0byteapps.eu/view/share/", "");
+                            new MaterialDialog.Builder(SharedActivity.this)
+                                    .title("Share toevoegen")
+                                    .content("Voer hieronder een beschrijving van de share in zodat je weet welke share dit is")
+                                    .inputType(InputType.TYPE_CLASS_TEXT)
+                                    .input("Cijfers van Bart", null, new MaterialDialog.InputCallback() {
+                                        @Override
+                                        public void onInput(MaterialDialog dialog, CharSequence input) {
+                                            if (input.toString().isEmpty()) input = "Naamloos";
+                                            addShare(secret, input.toString());
+                                        }
+                                    }).show();
+                        } else {
+                            dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
+                        }
+                    }
+                }).show();
+    }
 
     private void addShare(final String secret, final String comment) {
         final MaterialDialog dialog = new MaterialDialog.Builder(this)
@@ -126,12 +204,52 @@ public class SharedActivity extends AppCompatActivity {
                     }
                     Share share = shares[0];
                     share.setComment(comment);
-                    Log.d(TAG, "run: " + share.toString());
+                    String queryResult = shareDatabase.addItem(share);
+                    if (queryResult != null) {
+                        error(queryResult);
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getShares();
+                            }
+                        });
+                    }
                 } catch (IOException e) {
                     error(getString(R.string.err_no_connection));
                 }
             }
         }).start();
+    }
+
+    private void getShares() {
+        errorView.setVisibility(View.GONE);
+        loading.setVisibility(View.VISIBLE);
+        loading_layout.setVisibility(View.VISIBLE);
+        nothing_shared_layout.setVisibility(View.GONE);
+        shares_layout.setVisibility(View.GONE);
+
+        Share[] shares = shareDatabase.getShares();
+        if (shares == null) {
+            errorView.setVisibility(View.VISIBLE);
+            loading.setVisibility(View.GONE);
+            errorView.setRetryText(R.string.retry);
+            errorView.setImage(R.drawable.error_squirrel);
+            errorView.setTitle(R.string.unknown_error);
+            errorView.setRetryListener(new ErrorView.RetryListener() {
+                @Override
+                public void onRetry() {
+                    getShares();
+                }
+            });
+        } else if (shares.length == 0) {
+            loading_layout.setVisibility(View.GONE);
+            nothing_shared_layout.setVisibility(View.VISIBLE);
+        } else {
+            loading_layout.setVisibility(View.GONE);
+            shares_layout.setVisibility(View.VISIBLE);
+            //show shares
+        }
     }
 
 

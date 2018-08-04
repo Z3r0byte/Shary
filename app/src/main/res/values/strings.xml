@@ -30,18 +30,16 @@
     <string name="privacypolicy">Privacybeleid</string>
     <string name="privacy_policy_agree">Ik heb het privacybeleid gelezen en ga er mee akkoord.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="login_first">Je moet eerst inloggen</string>
     <string name="wait_till_done">Wacht tot alles klaar is</string>
     <string name="no_results">Geen resultaten</string>
-    <string name="searching">Zoeken...</string>
+    <string name="searching">Zoeken…</string>
     <string name="search">Zoek</string>
     <string name="school_selected">Geselecteerde school:</string>
     <string name="manual_school_title">School handmatig invoeren</string>
     <string name="manual_school_desc">Voer de url van de school handmatig in. Voer alleen het gedeelte voor .magister.net in. Vb: Als de url van je school https://commanderij.magister.net is, voer je alleen commanderij in.</string>
     <string name="your_password_title">Je wachtwoord</string>
-    <string name="your_password_desc">Zometeen ga je inloggen met je Magister account, dit is nodig om je toegang tot je account te kunnen delen. Jouw inloggevens worden NIET naar onze servers gestuurd, alleen naar die van Magister! In plaats daarvan slaan we je sessie-id op op onze server. Hiermee kunnen we data opvragen uit je magister account om het te kunnen delen. De voordelen hiervan zijn: jij kunt de toegang elk moment via de app intrekken; wij weten jouw wachtwoord (en gebruikersnaam) niet en kunnen die dan ook niet aanpassen; in het geval van een hack is je wachtwoord nog steeds veilig aangezien deze nergens opgeslagen wordt.</string>
+    <string name="your_password_desc">Zometeen ga je inloggen met je Magister account, dit is nodig om je toegang tot je account te kunnen delen. Jouw inloggevens worden NIET naar onze servers gestuurd, alleen naar die van Magister! In plaats daarvan slaan we je sessie-id op onze server op. Hiermee kunnen we data opvragen uit je magister account om het te kunnen delen. De voordelen hiervan zijn: jij kunt de toegang elk moment via de app intrekken; wij weten jouw wachtwoord (en gebruikersnaam) niet en kunnen die dan ook niet aanpassen; in het geval van een hack is je wachtwoord nog steeds veilig aangezien deze nergens opgeslagen wordt.</string>
     <string name="important">Belangrijk</string>
     <string name="valid_session_desc">Om te zorgen dat je gedeelde toegang geldig blijft stuurt de app elke dag een nieuwe sessie naar onze servers. Indien je de app verwijdert zijn je shares daarna nog maximaal 30 dagen geldig. Daarna kunnen wij simpelweg niet meer van jouw account informatie ophalen.</string>
     <string name="confirm_url_title">URL bevestigen</string>
@@ -50,7 +48,7 @@
     <string name="search_school">School zoeken</string>
     <string name="choose_school_first">Kies eerst een school</string>
     <string name="logged_in">Ingelogd</string>
-    <string name="logging_in">Inloggen...</string>
+    <string name="logging_in">Inloggen…</string>
     <string name="err_no_connection">Geen verbinding</string>
     <string name="invalid_credentials">Verkeerde gebruikersnaam en/of wachtwoord</string>
     <string name="unknown_error">Onbekende fout</string>
@@ -64,7 +62,7 @@
     <string name="start">Start</string>
     <string name="an_error_occured_try_again">Er is een fout opgetreden, probeer het opnieuw</string>
     <string name="you_have_not_shared_yet">Je hebt nog niks gedeeld. Druk op de knop onderin om te beginnen met delen.</string>
-    <string name="lets_start">Laten we beginnen...</string>
+    <string name="lets_start">Laten we beginnen…</string>
     <string name="login_before_sharing">Voordat je kunt beginnen met het delen, moet je eerst inloggen met je Magister account</string>
     <string name="retry">Opnieuw</string>
     <string name="new_share">Nieuwe share</string>
@@ -81,6 +79,9 @@
     <string name="update">Updaten</string>
     <string name="share_revoked">Share ingetrokken</string>
     <string name="share_updated">Share aangepast</string>
+    <string name="err_saving_share">Fout bij opslaan share</string>
+    <string name="err_share_exists">Share bestaat al</string>
+    <string name="nobody_shared_with_you">Niemand heeft nog iets met je gedeeld. Vraag je vrienden om hun share met je te delen. Je kunt de link dan importeren of handmatig toevoegen met de knop hierbeneden</string>
     <array name="share_types">
         <item>Agenda</item>
         <item>Nieuwe cijfers</item>

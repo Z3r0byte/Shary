@@ -36,11 +36,11 @@ import java.security.MessageDigest;
 
 import agency.tango.materialintroscreen.SlideFragment;
 import eu.z3r0byteapps.shary.MagisterLibrary.Magister;
-import eu.z3r0byteapps.shary.MagisterLibrary.container.Profile;
 import eu.z3r0byteapps.shary.MagisterLibrary.container.School;
 import eu.z3r0byteapps.shary.MagisterLibrary.container.User;
 import eu.z3r0byteapps.shary.MagisterLibrary.util.HttpUtil;
 import eu.z3r0byteapps.shary.MagisterLibrary.util.LogUtil;
+import eu.z3r0byteapps.shary.MagisterLibrary.util.SchoolUrl;
 import eu.z3r0byteapps.shary.R;
 import eu.z3r0byteapps.shary.SharyLibrary.Result;
 import eu.z3r0byteapps.shary.SharyLibrary.Urls;
@@ -92,13 +92,13 @@ public class Setup extends SlideFragment {
                             return;
                         }
                         complete(step1);
-                        Profile profile = getProfile(magister);
+                        String profile = getProfile(magister);
                         if (profile == null) {
                             failure();
                             return;
                         }
                         complete(step2);
-                        Integer personID = profile.id;
+                        Integer personID = magister.profile.id;
                         String token = generateToken(profile);
                         complete(step3);
                         Log.d(TAG, String.format("run: Token: %s", token));
@@ -127,14 +127,19 @@ public class Setup extends SlideFragment {
         }
     }
 
-    private Profile getProfile(Magister magister) {
-        return magister.profile;
+    private String getProfile(Magister magister) {
+        SchoolUrl url = new SchoolUrl(magister.school);
+        try {
+            return LogUtil.getStringFromInputStream(HttpUtil.httpGet(url.getAccountUrl()));
+        } catch (IOException e) {
+            return null;
+        }
     }
 
-    private String generateToken(Profile profile) {
+    private String generateToken(String profile) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest((new Gson().toJson(profile)).getBytes("UTF-8"));
+            byte[] hash = digest.digest(profile.getBytes("UTF-8"));
             StringBuffer hexString = new StringBuffer();
 
             for (int i = 0; i < hash.length; i++) {
@@ -176,6 +181,8 @@ public class Setup extends SlideFragment {
                 step5.setTextColor(gray);
                 step6.setTextColor(gray);
                 Toast.makeText(getActivity(), R.string.an_error_occured_try_again, Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                button.setVisibility(View.VISIBLE);
             }
         });
     }

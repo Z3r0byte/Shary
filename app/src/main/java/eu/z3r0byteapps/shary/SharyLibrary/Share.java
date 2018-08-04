@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Bas van den Boom 'Z3r0byte'
+ * Copyright (c) 2018-2018 Bas van den Boom 'Z3r0byte'
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package eu.z3r0byteapps.shary.SharyLibrary;
 
 import java.util.Date;
-
-import eu.z3r0byteapps.shary.MagisterLibrary.container.ShareRestriction;
 
 public class Share {
     private Date expire;
