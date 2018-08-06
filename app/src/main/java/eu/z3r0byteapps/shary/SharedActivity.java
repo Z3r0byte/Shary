@@ -19,6 +19,7 @@ package eu.z3r0byteapps.shary;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -37,7 +38,10 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import eu.z3r0byteapps.shary.Adapters.SharedAdapter;
 import eu.z3r0byteapps.shary.MagisterLibrary.util.HttpUtil;
 import eu.z3r0byteapps.shary.MagisterLibrary.util.LogUtil;
 import eu.z3r0byteapps.shary.SharyLibrary.Result;
@@ -147,7 +151,7 @@ public class SharedActivity extends AppCompatActivity {
     private void addManualShare() {
         new MaterialDialog.Builder(this)
                 .title("Share toevoegen")
-                .content("Voer hieronder een beschrijving van de share in zodat je weet welke share dit is")
+                .content("Voer hieronder de URL van de share in")
                 .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI)
                 .alwaysCallInputCallback()
                 .input("URL van de share: https://shary.z3r0byteapps.eu/view/share/...", null, new MaterialDialog.InputCallback() {
@@ -174,6 +178,23 @@ public class SharedActivity extends AppCompatActivity {
                         } else {
                             dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
                         }
+                    }
+                })
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        secret = dialog.getInputEditText().getText().toString().trim().replace("https://shary.z3r0byteapps.eu/view/share/", "");
+                        new MaterialDialog.Builder(SharedActivity.this)
+                                .title("Share toevoegen")
+                                .content("Voer hieronder een beschrijving van de share in zodat je weet welke share dit is")
+                                .inputType(InputType.TYPE_CLASS_TEXT)
+                                .input("Cijfers van Bart", null, new MaterialDialog.InputCallback() {
+                                    @Override
+                                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                                        if (input.toString().isEmpty()) input = "Naamloos";
+                                        addShare(secret, input.toString());
+                                    }
+                                }).show();
                     }
                 }).show();
     }
@@ -229,7 +250,7 @@ public class SharedActivity extends AppCompatActivity {
         nothing_shared_layout.setVisibility(View.GONE);
         shares_layout.setVisibility(View.GONE);
 
-        Share[] shares = shareDatabase.getShares();
+        final Share[] shares = shareDatabase.getShares();
         if (shares == null) {
             errorView.setVisibility(View.VISIBLE);
             loading.setVisibility(View.GONE);
@@ -246,9 +267,21 @@ public class SharedActivity extends AppCompatActivity {
             loading_layout.setVisibility(View.GONE);
             nothing_shared_layout.setVisibility(View.VISIBLE);
         } else {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ArrayList<Share> sharesList = new ArrayList<Share>(Arrays.asList(shares));
+                    final SharedAdapter sharedAdapter = new SharedAdapter(SharedActivity.this, sharesList);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listView.setAdapter(sharedAdapter);
+                        }
+                    });
+                }
+            }).start();
             loading_layout.setVisibility(View.GONE);
             shares_layout.setVisibility(View.VISIBLE);
-            //show shares
         }
     }
 

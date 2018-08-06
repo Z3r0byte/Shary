@@ -82,6 +82,8 @@
     <string name="err_saving_share">Fout bij opslaan share</string>
     <string name="err_share_exists">Share bestaat al</string>
     <string name="nobody_shared_with_you">Niemand heeft nog iets met je gedeeld. Vraag je vrienden om hun share met je te delen. Je kunt de link dan importeren of handmatig toevoegen met de knop hierbeneden</string>
+    <string name="delete_share_title">Share verwijderen?</string>
+    <string name="delete_share_desc">Als je de share verwijdert, moet je deze opnieuw toevoegen als je hem weer wilt gebruiken.</string>
     <array name="share_types">
         <item>Agenda</item>
         <item>Nieuwe cijfers</item>

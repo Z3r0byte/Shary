@@ -60,7 +60,7 @@ public class ShareDatabase extends SQLiteOpenHelper {
     @SuppressLint("SimpleDateFormat")
     private static Date parseDate(String date) {
         try {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
+            return new SimpleDateFormat("dd-MM-yyyy").parse(date);
         } catch (ParseException e) {
             return null;
         }
