@@ -25,12 +25,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -276,6 +278,15 @@ public class SharedActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             listView.setAdapter(sharedAdapter);
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    Share[] shares1 = shareDatabase.getShares(); //Retrieving shares in case one was deleted trough the adapter
+                                    Intent intent = new Intent(SharedActivity.this, ViewShareActivity.class);
+                                    intent.putExtra("Share", new Gson().toJson(shares1[i]));
+                                    startActivity(intent);
+                                }
+                            });
                         }
                     });
                 }

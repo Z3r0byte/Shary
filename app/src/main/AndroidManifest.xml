@@ -12,7 +12,6 @@
         <activity
             android:name=".ShareActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
-
         <activity
             android:name=".HomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
@@ -22,7 +21,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".SharedActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
@@ -38,11 +36,18 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/Theme.Intro" />
+        <activity
+            android:name=".ViewShareActivity"
+            android:label="@string/title_activity_view_share"
+            android:parentActivityName=".SharedActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="eu.z3r0byteapps.shary.SharedActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -93,4 +93,13 @@
         <item>Nieuwe cijfers en cijfers</item>
         <item>Agenda, nieuwe cijfers en cijfers</item>
     </array>
+    <string name="title_activity_view_share">ViewShareActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="calendar">Agenda</string>
+    <string name="info">Info</string>
+    <string name="new_grades">Nieuwe cijfers</string>
+    <string name="grades">Cijfers</string>
 </resources>

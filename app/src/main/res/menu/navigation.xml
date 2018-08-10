@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_info"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/info" />
+
+    <item
+        android:id="@+id/navigation_calendar"
+        android:icon="@drawable/ic_event_note_black_24dp"
+        android:title="@string/calendar" />
+
+    <item
+        android:id="@+id/navigation_new_grades"
+        android:icon="@drawable/ic_inbox_black_24dp"
+        android:title="@string/new_grades" />
+
+    <item
+        android:id="@+id/navigation_grades"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="@string/grades" />
+
+</menu>
