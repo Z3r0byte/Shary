@@ -91,6 +91,7 @@ public class ViewInfo extends Fragment {
         loading = view.findViewById(R.id.loading);
 
         updateView();
+        loading.setVisibility(View.VISIBLE);
 
         new Thread(new Runnable() {
             @Override

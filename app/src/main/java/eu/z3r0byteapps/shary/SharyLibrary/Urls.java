@@ -23,7 +23,8 @@ public class Urls {
     public static final String addShare = common + "add/share/";
     public static final String expire = common + "expire/share/";
     public static final String updateShare = common + "update/share/";
-    public static final String getShare = common + "get/share/?s=";
-    public static final String getCalendar = common + "get/calendar/?date=";
-    public static final String getNewGrades = common + "/get/newgrades/?s=";
+    public static final String get = common + "get/";
+    public static final String getShare = get + "share/?s=";
+    public static final String getCalendar = get + "calendar/?date=";
+    public static final String getNewGrades = get + "newgrades/?s=";
 }

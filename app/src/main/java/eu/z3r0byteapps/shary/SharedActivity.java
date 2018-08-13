@@ -146,7 +146,7 @@ public class SharedActivity extends AppCompatActivity {
 
         shareDatabase = new ShareDatabase(this);
 
-        getShares();
+        refresh();
     }
 
 
@@ -243,6 +243,48 @@ public class SharedActivity extends AppCompatActivity {
                 }
             }
         }).start();
+
+        refresh();
+    }
+
+    private void refresh() {
+        final MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title("Laden...")
+                .content("Een moment geduld")
+                .progress(true, 0)
+                .autoDismiss(false)
+                .show();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Share[] shares = shareDatabase.getShares();
+                for (Share share :
+                        shares) {
+                    try {
+                        GsonBuilder gsonBuilder = new GsonBuilder();
+                        gsonBuilder.setDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String result = LogUtil.getStringFromInputStream(HttpUtil.httpGet(Urls.getShare + share.getSecret()));
+
+                        Share tempshare = gsonBuilder.create().fromJson(result, Share[].class)[0];
+                        share.setExpire(tempshare.getExpire());
+                        share.setType(tempshare.getType());
+                        share.setRestrictions(tempshare.getRestrictions());
+                        shareDatabase.updateShare(share);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getShares();
+                        dialog.dismiss();
+                    }
+                });
+            }
+        }).start();
+
     }
 
     private void getShares() {
