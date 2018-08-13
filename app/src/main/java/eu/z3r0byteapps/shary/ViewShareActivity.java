@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.util.Date;
+
 import eu.z3r0byteapps.shary.Fragments.ViewCalendar;
 import eu.z3r0byteapps.shary.Fragments.ViewGrades;
 import eu.z3r0byteapps.shary.Fragments.ViewInfo;
@@ -98,9 +100,10 @@ public class ViewShareActivity extends AppCompatActivity {
     public void updateBottomBar(Boolean calendar, Boolean newGrades, Boolean grades) {
         navigation.getMenu().clear();
         navigation.inflateMenu(R.menu.navigation);
-        if (!grades) navigation.getMenu().removeItem(R.id.navigation_grades);
-        if (!newGrades) navigation.getMenu().removeItem(R.id.navigation_new_grades);
-        if (!calendar) navigation.getMenu().removeItem(R.id.navigation_calendar);
+        Boolean expired = share.getExpire().before(new Date());
+        if (!grades || expired) navigation.getMenu().removeItem(R.id.navigation_grades);
+        if (!newGrades || expired) navigation.getMenu().removeItem(R.id.navigation_new_grades);
+        if (!calendar || expired) navigation.getMenu().removeItem(R.id.navigation_calendar);
     }
 
 

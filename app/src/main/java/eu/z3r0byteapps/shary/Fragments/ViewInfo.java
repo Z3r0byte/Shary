@@ -57,6 +57,7 @@ public class ViewInfo extends Fragment {
 
     TextView comment;
     TextView expiry;
+    TextView expired;
     CheckBox calendar;
     CheckBox newGrades;
     CheckBox grades;
@@ -89,6 +90,7 @@ public class ViewInfo extends Fragment {
         newGrades = view.findViewById(R.id.newgrades);
         grades = view.findViewById(R.id.grades);
         loading = view.findViewById(R.id.loading);
+        expired = view.findViewById(R.id.expired);
 
         updateView();
         loading.setVisibility(View.VISIBLE);
@@ -131,8 +133,10 @@ public class ViewInfo extends Fragment {
 
     private void updateView() {
         if (share.getExpire().before(new Date())) {
+            expired.setVisibility(View.VISIBLE);
             comment.setText(String.format("%s (verlopen)", share.getComment()));
         } else {
+            expired.setVisibility(View.GONE);
             comment.setText(share.getComment());
         }
 
