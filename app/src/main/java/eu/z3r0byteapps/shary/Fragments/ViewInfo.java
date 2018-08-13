@@ -90,22 +90,7 @@ public class ViewInfo extends Fragment {
         grades = view.findViewById(R.id.grades);
         loading = view.findViewById(R.id.loading);
 
-        comment.setText(share.getComment());
-        if (formatDate(share.getExpire()).equals("01-01-2050")) {
-            expiry.setText(String.format(activity.getString(R.string.expires_format), "nooit"));
-        } else {
-            expiry.setText(String.format(activity.getString(R.string.expires_format), formatDate(share.getExpire())));
-        }
-        Boolean cal = (share.getType() == ShareType.CALENDARANDGRADES || share.getType() == ShareType.CALENDARANDNEWGRADES
-                || share.getType() == ShareType.CALENDAR || share.getType() == ShareType.EVERYTHING);
-        grades.setChecked(cal);
-        Boolean newGrad = (share.getType() == ShareType.NEWGARDESANDGRADES || share.getType() == ShareType.CALENDARANDNEWGRADES
-                || share.getType() == ShareType.NEWGRADES || share.getType() == ShareType.EVERYTHING);
-        newGrades.setChecked(newGrad);
-        Boolean grad = (share.getType() == ShareType.NEWGARDESANDGRADES || share.getType() == ShareType.CALENDARANDGRADES
-                || share.getType() == ShareType.GRADES || share.getType() == ShareType.EVERYTHING);
-        grades.setChecked(grad);
-        loading.setVisibility(View.GONE);
+        updateView();
 
         new Thread(new Runnable() {
             @Override
@@ -117,28 +102,14 @@ public class ViewInfo extends Fragment {
                     Share tempshare = gsonBuilder.create().fromJson(result, Share[].class)[0];
                     share.setExpire(tempshare.getExpire());
                     share.setType(tempshare.getType());
+                    share.setRestrictions(tempshare.getRestrictions());
                     ViewShareActivity.share = share;
-                    //TODO update share in database
+                    shareDatabase.updateShare(share);
 
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            comment.setText(share.getComment());
-                            if (formatDate(share.getExpire()).equals("01-01-2050")) {
-                                expiry.setText(String.format(activity.getString(R.string.expires_format), "nooit"));
-                            } else {
-                                expiry.setText(String.format(activity.getString(R.string.expires_format), formatDate(share.getExpire())));
-                            }
-                            Boolean cal = (share.getType() == ShareType.CALENDARANDGRADES || share.getType() == ShareType.CALENDARANDNEWGRADES
-                                    || share.getType() == ShareType.CALENDAR || share.getType() == ShareType.EVERYTHING);
-                            calendar.setChecked(cal);
-                            Boolean newGrad = (share.getType() == ShareType.NEWGARDESANDGRADES || share.getType() == ShareType.CALENDARANDNEWGRADES
-                                    || share.getType() == ShareType.NEWGRADES || share.getType() == ShareType.EVERYTHING);
-                            newGrades.setChecked(newGrad);
-                            Boolean grad = (share.getType() == ShareType.NEWGARDESANDGRADES || share.getType() == ShareType.CALENDARANDGRADES
-                                    || share.getType() == ShareType.GRADES || share.getType() == ShareType.EVERYTHING);
-                            grades.setChecked(grad);
-                            loading.setVisibility(View.GONE);
+                            updateView();
                         }
                     });
                 } catch (IOException e) {
@@ -155,6 +126,34 @@ public class ViewInfo extends Fragment {
 
 
         return view;
+    }
+
+    private void updateView() {
+        if (share.getExpire().before(new Date())) {
+            comment.setText(String.format("%s (verlopen)", share.getComment()));
+        } else {
+            comment.setText(share.getComment());
+        }
+
+        if (formatDate(share.getExpire()).equals("01-01-2050")) {
+            expiry.setText(String.format(activity.getString(R.string.expires_format), "nooit"));
+        } else {
+            expiry.setText(String.format(activity.getString(R.string.expires_format), formatDate(share.getExpire())));
+        }
+
+        Boolean cal = (share.getType() == ShareType.CALENDARANDGRADES || share.getType() == ShareType.CALENDARANDNEWGRADES
+                || share.getType() == ShareType.CALENDAR || share.getType() == ShareType.EVERYTHING);
+        calendar.setChecked(cal);
+        Boolean newGrad = (share.getType() == ShareType.NEWGARDESANDGRADES || share.getType() == ShareType.CALENDARANDNEWGRADES
+                || share.getType() == ShareType.NEWGRADES || share.getType() == ShareType.EVERYTHING);
+        newGrades.setChecked(newGrad);
+        Boolean grad = (share.getType() == ShareType.NEWGARDESANDGRADES || share.getType() == ShareType.CALENDARANDGRADES
+                || share.getType() == ShareType.GRADES || share.getType() == ShareType.EVERYTHING);
+        grades.setChecked(grad);
+
+        activity.updateBottomBar(cal, newGrad, grad);
+
+        loading.setVisibility(View.GONE);
     }
 
     @SuppressLint("SimpleDateFormat")

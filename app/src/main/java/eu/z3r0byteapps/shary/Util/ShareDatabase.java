@@ -124,6 +124,18 @@ public class ShareDatabase extends SQLiteOpenHelper {
 
     }
 
+    public void updateShare(Share share) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_EXPIRY, formatDate(share.getExpire()));
+        contentValues.put(KEY_TYPE, share.getType().getID());
+        contentValues.put(KEY_RESTRICTIONS, new Gson().toJson(share.getRestrictions()));
+        contentValues.put(KEY_COMMENT, share.getComment());
+
+        db.update(TABLE_RECEIVED, contentValues, KEY_ID + "=?", new String[]{Integer.toString(share.getId())});
+        db.close();
+    }
+
     public Share[] getShares() {
         SQLiteDatabase db = this.getWritableDatabase();
         String[] tableColumns = new String[]{
@@ -161,7 +173,6 @@ public class ShareDatabase extends SQLiteOpenHelper {
 
     public void deleteShare(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String whereClause = "_id=?";
         db.delete(TABLE_RECEIVED, KEY_ID + "=?", new String[]{String.valueOf(id)});
     }
 

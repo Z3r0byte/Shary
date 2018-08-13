@@ -42,6 +42,7 @@ public class ViewShareActivity extends AppCompatActivity {
     ViewGrades gradesFragment = new ViewGrades();
 
     Toolbar toolbar;
+    BottomNavigationView navigation;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -90,8 +91,16 @@ public class ViewShareActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_manager, infoFragment).commit();
 
-        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+    public void updateBottomBar(Boolean calendar, Boolean newGrades, Boolean grades) {
+        navigation.getMenu().clear();
+        navigation.inflateMenu(R.menu.navigation);
+        if (!grades) navigation.getMenu().removeItem(R.id.navigation_grades);
+        if (!newGrades) navigation.getMenu().removeItem(R.id.navigation_new_grades);
+        if (!calendar) navigation.getMenu().removeItem(R.id.navigation_calendar);
     }
 
 

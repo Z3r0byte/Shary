@@ -102,4 +102,8 @@
     <string name="info">Info</string>
     <string name="new_grades">Nieuwe cijfers</string>
     <string name="grades">Cijfers</string>
+
+    <string name="hello_blank_fragment">UAGSGuyF%DF</string>
+    <string name="no_new_grades">Geen nieuwe cijfers</string>
+    <string name="no_lessons">Geen lessen</string>
 </resources>

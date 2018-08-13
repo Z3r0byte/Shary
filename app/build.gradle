@@ -39,6 +39,8 @@ dependencies {
     implementation("com.mikepenz:materialdrawer:6.0.8@aar") {
         transitive = true
     }
+    compile 'com.mikepenz:iconics-core:2.8.2@aar'
+    compile 'com.mikepenz:google-material-typeface:2.2.0.1.original@aar'
 
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation "com.android.support:recyclerview-v7:26.1.0"
