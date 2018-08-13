@@ -22,14 +22,31 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.gson.Gson;
+
+import java.io.IOException;
+
+import eu.z3r0byteapps.shary.MagisterLibrary.adapter.StudyAdapter;
+import eu.z3r0byteapps.shary.MagisterLibrary.container.Study;
+import eu.z3r0byteapps.shary.MagisterLibrary.util.GsonUtil;
+import eu.z3r0byteapps.shary.MagisterLibrary.util.HttpUtil;
+import eu.z3r0byteapps.shary.MagisterLibrary.util.LogUtil;
 import eu.z3r0byteapps.shary.R;
+import eu.z3r0byteapps.shary.SharyLibrary.Result;
+import eu.z3r0byteapps.shary.SharyLibrary.Share;
+import eu.z3r0byteapps.shary.SharyLibrary.Urls;
+import eu.z3r0byteapps.shary.ViewShareActivity;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ViewGrades extends Fragment {
 
+    ViewShareActivity activity;
+    Share share;
 
     public ViewGrades() {
         // Required empty public constructor
@@ -40,7 +57,81 @@ public class ViewGrades extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_view_grades, container, false);
+        View view = inflater.inflate(R.layout.fragment_view_grades, container, false);
+
+
+        activity = (ViewShareActivity) getActivity();
+        share = ViewShareActivity.share;
+
+        getStudies();
+
+        return view;
+    }
+
+
+    private void getStudies() {
+        final MaterialDialog dialog = new MaterialDialog.Builder(activity)
+                .title(R.string.loading)
+                .content(R.string.please_wait)
+                .progress(true, 0)
+                .autoDismiss(false)
+                .show();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Gson gson = GsonUtil.getGsonWithAdapter(Study[].class, new StudyAdapter());
+                    String response = LogUtil.getStringFromInputStream(HttpUtil.httpGet(Urls.getStudies + share.getSecret()));
+
+                    Result result = new Gson().fromJson(response, Result.class);
+                    if (result.error != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //show error
+                            }
+                        });
+                    }
+                    final Study[] studies = gson.fromJson(response, Study[].class);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            chooseStudy(studies);
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dialog.dismiss();
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    private void chooseStudy(Study[] studies) {
+        String[] values = new String[studies.length];
+        int i = 0;
+        for (Study study :
+                studies) {
+            values[i] = study.description;
+            i++;
+        }
+        new MaterialDialog.Builder(activity)
+                .title(R.string.choose_a_grade_period)
+                .items(values)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        Toast.makeText(activity, "Thank you, now f*ck off", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .show();
     }
 
 }

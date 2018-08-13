@@ -106,4 +106,7 @@
     <string name="hello_blank_fragment">UAGSGuyF%DF</string>
     <string name="no_new_grades">Geen nieuwe cijfers</string>
     <string name="no_lessons">Geen lessen</string>
+    <string name="loading">Laden...</string>
+    <string name="please_wait">Een moment geduld</string>
+    <string name="choose_a_grade_period">Kies een cijferperiode</string>
 </resources>

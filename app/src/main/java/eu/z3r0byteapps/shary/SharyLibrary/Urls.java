@@ -27,4 +27,5 @@ public class Urls {
     public static final String getShare = get + "share/?s=";
     public static final String getCalendar = get + "calendar/?date=";
     public static final String getNewGrades = get + "newgrades/?s=";
+    public static final String getStudies = get + "studies/?s=";
 }

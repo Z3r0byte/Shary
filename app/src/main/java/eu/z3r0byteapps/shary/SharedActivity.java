@@ -249,10 +249,10 @@ public class SharedActivity extends AppCompatActivity {
 
     private void refresh() {
         final MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .title("Laden...")
-                .content("Een moment geduld")
+                .title(R.string.loading)
+                .content(R.string.please_wait)
                 .progress(true, 0)
-                .autoDismiss(false)
+                .cancelable(false)
                 .show();
 
         new Thread(new Runnable() {
