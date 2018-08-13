@@ -67,7 +67,7 @@ public class ViewNewGrades extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_new_grades, container, false);
+        view = inflater.inflate(R.layout.fragment_view_new_grades, container, false);
 
         activity = (ViewShareActivity) getActivity();
         share = ViewShareActivity.share;
