@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Bas van den Boom 'Z3r0byte'
+ * Copyright (c) 2018-2018 Bas van den Boom 'Z3r0byte'
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -341,7 +341,7 @@ public class ShareActivity extends AppCompatActivity implements DatePickerDialog
                     Log.d(TAG, "run: shares: " + shares[0].toString());
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Bekijk mijn Magister account via Shary: https://shary.z3r0byteapps.eu/view/share/" + shares[0].getSecret());
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Bekijk mijn Magister account via Shary: https://shary.z3r0byteapps.eu/view/share/" + shares[0].getSecret() + "/");
                     sendIntent.setType("text/plain");
                     startActivity(Intent.createChooser(sendIntent, getString(R.string.send_link)));
                 } catch (IOException e) {

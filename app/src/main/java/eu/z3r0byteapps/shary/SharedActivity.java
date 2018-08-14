@@ -165,7 +165,7 @@ public class SharedActivity extends AppCompatActivity {
                             return;
                         }
                         if (dialog.getActionButton(DialogAction.POSITIVE).isEnabled()) {
-                            secret = input.toString().trim().replace("https://shary.z3r0byteapps.eu/view/share/", "");
+                            secret = input.toString().trim().replace("https://shary.z3r0byteapps.eu/view/share/", "").replaceAll("/", "");
                             new MaterialDialog.Builder(SharedActivity.this)
                                     .title("Share toevoegen")
                                     .content("Voer hieronder een beschrijving van de share in zodat je weet welke share dit is")

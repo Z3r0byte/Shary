@@ -123,7 +123,7 @@ public class ShareAdapter extends ArrayAdapter<Share> implements DatePickerDialo
             public void onClick(View view) {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "Bekijk mijn Magister account via Shary: https://shary.z3r0byteapps.eu/view/share/" + values[position].getSecret());
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Bekijk mijn Magister account via Shary: https://shary.z3r0byteapps.eu/view/share/" + values[position].getSecret() + "/");
                 sendIntent.setType("text/plain");
                 context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.send_link)));
             }
