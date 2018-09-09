@@ -160,7 +160,7 @@ public class SharedActivity extends AppCompatActivity {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
                         if (!input.toString().trim().startsWith("https://shary.z3r0byteapps.eu/view/share/") ||
-                                input.toString().trim().replace("https://shary.z3r0byteapps.eu/view/share/", "").length() != 64) {
+                                input.toString().trim().replace("https://shary.z3r0byteapps.eu/view/share/", "").replaceAll("/", "").length() != 64) {
                             dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
                             return;
                         }
@@ -185,7 +185,7 @@ public class SharedActivity extends AppCompatActivity {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        secret = dialog.getInputEditText().getText().toString().trim().replace("https://shary.z3r0byteapps.eu/view/share/", "");
+                        secret = dialog.getInputEditText().getText().toString().trim().replace("https://shary.z3r0byteapps.eu/view/share/", "").replaceAll("/", "");
                         new MaterialDialog.Builder(SharedActivity.this)
                                 .title("Share toevoegen")
                                 .content("Voer hieronder een beschrijving van de share in zodat je weet welke share dit is")
