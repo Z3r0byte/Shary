@@ -1,32 +1,13 @@
-/*
- * Copyright (c) 2018-2018 Bas van den Boom 'Z3r0byte'
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package eu.z3r0byteapps.shary.Services;
 
-package eu.z3r0byteapps.shary;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-
+import com.firebase.jobdispatcher.JobParameters;
+import com.firebase.jobdispatcher.JobService;
 import com.google.gson.Gson;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -45,52 +26,44 @@ import eu.z3r0byteapps.shary.Util.ConfigUtil;
 import eu.z3r0byteapps.shary.Util.DateUtils;
 import eu.z3r0byteapps.shary.Util.JobUtil;
 
-public class HomeActivity extends AppCompatActivity {
+public class RenewSessionKey extends JobService {
+    private static final String TAG = "Shary";
+
     ConfigUtil configUtil;
+    JobParameters jobParameters;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+    public boolean onStartJob(JobParameters jobParameters) {
+        JobUtil.scheduleJob(getApplicationContext());
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.app_name);
-        setSupportActionBar(toolbar);
+        this.jobParameters = jobParameters;
+        Context context = getApplicationContext();
+        if (!isOnline(context)) {
+            Log.e(TAG, "Session Renewal: Not connected to wifi, aborting");
+            return false;
+        }
 
-        final PrimaryDrawerItem homeItem = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.home).withSetSelected(true);
-        final PrimaryDrawerItem shareItem = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.share);
-        final PrimaryDrawerItem sharedItem = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.shared_with_me);
+        configUtil = new ConfigUtil(context);
+        if (!configUtil.getBoolean("loggedIn", false)) return false;
 
-        Drawer drawer = new DrawerBuilder()
-                .withActivity(this)
-                .withToolbar(toolbar)
-                .addDrawerItems(
-                        homeItem,
-                        shareItem,
-                        sharedItem
-                )
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if (drawerItem == homeItem) {
-                            //already here
-                        } else if (drawerItem == shareItem) {
-                            startActivity(new Intent(getApplicationContext(), ShareActivity.class));
-                            finish();
-                        } else if (drawerItem == sharedItem) {
-                            startActivity(new Intent(getApplicationContext(), SharedActivity.class));
-                            finish();
-                        }
-                        return true;
-                    }
-                })
-                .build();
+        if (configUtil.getString("lastSessionUpdate", null) == null) {
+            updateSession();
+        } else {
+            String dateStr = configUtil.getString("lastSessionUpdate", null);
+            Date lastDate = DateUtils.parseDate(dateStr, "dd-MM-yyyy");
+            Date now = DateUtils.parseDate(DateUtils.formatDate(DateUtils.getToday(), "dd-MM-yyyy"), "dd-MM-yyyy");
+            if (lastDate.before(now)) {
+                updateSession();
+            } else {
+                Log.d(TAG, "Session Renewal: Not at least one day ago, aborting");
+            }
+        }
+        return true;
+    }
 
-        JobUtil.cancelAllJobs(this);
-        JobUtil.scheduleJob(this);
-
-        configUtil = new ConfigUtil(this);
-        if (configUtil.getBoolean("loggedIn", false)) updateSession();
+    @Override
+    public boolean onStopJob(JobParameters jobParameters) {
+        return false;
     }
 
     private void updateSession() {
@@ -99,17 +72,24 @@ public class HomeActivity extends AppCompatActivity {
             public void run() {
                 Magister magister = login();
                 if (magister == null) {
+                    Log.e(TAG, "Session Renewal: Could not get magister, aborting");
                     return;
                 }
                 String profile = getProfile(magister);
                 if (profile == null) {
+                    Log.e(TAG, "Session Renewal: Could not get profile, aborting");
                     return;
                 }
                 Integer personID = magister.profile.id;
                 String token = generateToken(profile);
                 Boolean success = createUser(token, HttpUtil.getSessionToken(), personID);
-                if (success)
+                if (success) {
                     configUtil.setString("lastSessionUpdate", DateUtils.formatDate(new Date(), "dd-MM-yyyy"));
+                    Log.d(TAG, "Session Renewal: Session succesfully updated");
+                } else {
+                    Log.e(TAG, "Session Renewal: Failed to update session, aborting");
+                }
+                onStopJob(jobParameters);
             }
         }).start();
     }
@@ -164,5 +144,12 @@ public class HomeActivity extends AppCompatActivity {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    public boolean isOnline(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        //should check null because in airplane mode it will be null
+        return (netInfo != null && netInfo.isConnected());
     }
 }
