@@ -28,4 +28,5 @@ public class Urls {
     public static final String getCalendar = get + "calendar/?date=";
     public static final String getNewGrades = get + "newgrades/?s=";
     public static final String getStudies = get + "studies/?s=";
+    public static final String getGrades = get + "grades/?s=%1$s&id=%2$d&pta=false&average=true&date=%3$s";
 }

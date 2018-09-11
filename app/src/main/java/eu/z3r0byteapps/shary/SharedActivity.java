@@ -24,6 +24,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -105,6 +106,7 @@ public class SharedActivity extends AppCompatActivity {
                         @Override
                         public void onInput(MaterialDialog dialog, CharSequence input) {
                             if (input.toString().isEmpty()) input = "Naamloos";
+                            Log.d(TAG, "onInput: " + data.getLastPathSegment());
                             addShare(data.getLastPathSegment(), input.toString());
                         }
                     }).show();
@@ -217,7 +219,7 @@ public class SharedActivity extends AppCompatActivity {
                     dialog.dismiss();
                     Result[] result = gsonBuilder.create().fromJson(response, Result[].class);
                     if (result.length != 0 && result[0].error != null) {
-                        error(getString(R.string.unknown_error));
+                        error(result[0].error);
                         return;
                     }
                     Share[] shares = gsonBuilder.create().fromJson(response, Share[].class);

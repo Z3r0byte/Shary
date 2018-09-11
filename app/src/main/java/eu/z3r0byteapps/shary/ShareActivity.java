@@ -270,6 +270,7 @@ public class ShareActivity extends AppCompatActivity implements DatePickerDialog
             shares = gsonBuilder.create().fromJson(result, Share[].class);
             if (resultType.length != 0 && resultType[0].error != null) {
                 Log.e(TAG, "getShares: Error: " + resultType[0].error);
+                error(resultType[0].error);
                 return null;
             }
             return shares;
@@ -335,7 +336,7 @@ public class ShareActivity extends AppCompatActivity implements DatePickerDialog
                     Result result[] = new Gson().fromJson(resultStr, Result[].class);
                     Share[] shares = gson.fromJson(resultStr, Share[].class);
                     if (result.length != 0 && result[0].error != null) {
-                        error("Fout tijdens aanmaken van share");
+                        error("Fout tijdens aanmaken van share: " + result[0].error);
                         return;
                     }
                     Log.d(TAG, "run: shares: " + shares[0].toString());
