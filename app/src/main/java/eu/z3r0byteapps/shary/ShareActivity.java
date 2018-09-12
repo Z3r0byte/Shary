@@ -19,6 +19,7 @@ package eu.z3r0byteapps.shary;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -39,9 +40,13 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
@@ -113,6 +118,11 @@ public class ShareActivity extends AppCompatActivity implements DatePickerDialog
         final PrimaryDrawerItem homeItem = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.home);
         final PrimaryDrawerItem shareItem = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.share).withSetSelected(true);
         final PrimaryDrawerItem sharedItem = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.shared_with_me);
+        final PrimaryDrawerItem aboutItem = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.about_title).withSelectable(false);
+        final PrimaryDrawerItem donateItem = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.donate).withSelectable(false);
+        final PrimaryDrawerItem websiteItem = new PrimaryDrawerItem().withIdentifier(6).withName(R.string.website).withSelectable(false);
+        final PrimaryDrawerItem responsibleDisclosureItem = new PrimaryDrawerItem().withIdentifier(7).withName(R.string.responsible_disclosure_short).withSelectable(false);
+        final PrimaryDrawerItem privacyItem = new PrimaryDrawerItem().withIdentifier(8).withName(R.string.privacypolicy).withSelectable(false);
 
         Drawer drawer = new DrawerBuilder()
                 .withActivity(this)
@@ -120,7 +130,13 @@ public class ShareActivity extends AppCompatActivity implements DatePickerDialog
                 .addDrawerItems(
                         homeItem,
                         shareItem,
-                        sharedItem
+                        sharedItem,
+                        new DividerDrawerItem(),
+                        aboutItem,
+                        new SectionDrawerItem().withName(R.string.additional_info),
+                        websiteItem,
+                        responsibleDisclosureItem,
+                        privacyItem
                 )
                 .withSelectedItem(2)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -134,6 +150,19 @@ public class ShareActivity extends AppCompatActivity implements DatePickerDialog
                         } else if (drawerItem == sharedItem) {
                             startActivity(new Intent(getApplicationContext(), SharedActivity.class));
                             finish();
+                        } else if (drawerItem == aboutItem) {
+                            new LibsBuilder()
+                                    .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                                    .start(ShareActivity.this);
+                        } else if (drawerItem == websiteItem) {
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://shary.z3r0byteapps.eu/"));
+                            startActivity(browserIntent);
+                        } else if (drawerItem == privacyItem) {
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://shary.z3r0byteapps.eu/privacy-policy.html"));
+                            startActivity(browserIntent);
+                        } else if (drawerItem == responsibleDisclosureItem) {
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://shary.z3r0byteapps.eu/responsible-disclosure.html"));
+                            startActivity(browserIntent);
                         }
                         return true;
                     }

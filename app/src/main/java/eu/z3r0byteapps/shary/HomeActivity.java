@@ -17,15 +17,21 @@
 package eu.z3r0byteapps.shary;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.io.IOException;
@@ -44,6 +50,7 @@ import eu.z3r0byteapps.shary.SharyLibrary.Urls;
 import eu.z3r0byteapps.shary.Util.ConfigUtil;
 import eu.z3r0byteapps.shary.Util.DateUtils;
 import eu.z3r0byteapps.shary.Util.JobUtil;
+import io.fabric.sdk.android.Fabric;
 
 public class HomeActivity extends AppCompatActivity {
     ConfigUtil configUtil;
@@ -51,15 +58,21 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_home);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
 
-        final PrimaryDrawerItem homeItem = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.home).withSetSelected(true);
-        final PrimaryDrawerItem shareItem = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.share);
+        final PrimaryDrawerItem homeItem = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.home);
+        final PrimaryDrawerItem shareItem = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.share).withSetSelected(true);
         final PrimaryDrawerItem sharedItem = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.shared_with_me);
+        final PrimaryDrawerItem aboutItem = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.about_title).withSelectable(false);
+        final PrimaryDrawerItem donateItem = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.donate).withSelectable(false);
+        final PrimaryDrawerItem websiteItem = new PrimaryDrawerItem().withIdentifier(6).withName(R.string.website).withSelectable(false);
+        final PrimaryDrawerItem responsibleDisclosureItem = new PrimaryDrawerItem().withIdentifier(7).withName(R.string.responsible_disclosure_short).withSelectable(false);
+        final PrimaryDrawerItem privacyItem = new PrimaryDrawerItem().withIdentifier(8).withName(R.string.privacypolicy).withSelectable(false);
 
         Drawer drawer = new DrawerBuilder()
                 .withActivity(this)
@@ -67,8 +80,15 @@ public class HomeActivity extends AppCompatActivity {
                 .addDrawerItems(
                         homeItem,
                         shareItem,
-                        sharedItem
+                        sharedItem,
+                        new DividerDrawerItem(),
+                        aboutItem,
+                        new SectionDrawerItem().withName(R.string.additional_info),
+                        websiteItem,
+                        responsibleDisclosureItem,
+                        privacyItem
                 )
+                .withSelectedItem(2)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -76,10 +96,22 @@ public class HomeActivity extends AppCompatActivity {
                             //already here
                         } else if (drawerItem == shareItem) {
                             startActivity(new Intent(getApplicationContext(), ShareActivity.class));
-                            finish();
                         } else if (drawerItem == sharedItem) {
                             startActivity(new Intent(getApplicationContext(), SharedActivity.class));
                             finish();
+                        } else if (drawerItem == aboutItem) {
+                            new LibsBuilder()
+                                    .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                                    .start(HomeActivity.this);
+                        } else if (drawerItem == websiteItem) {
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://shary.z3r0byteapps.eu/"));
+                            startActivity(browserIntent);
+                        } else if (drawerItem == privacyItem) {
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://shary.z3r0byteapps.eu/privacy-policy.html"));
+                            startActivity(browserIntent);
+                        } else if (drawerItem == responsibleDisclosureItem) {
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://shary.z3r0byteapps.eu/responsible-disclosure.html"));
+                            startActivity(browserIntent);
                         }
                         return true;
                     }

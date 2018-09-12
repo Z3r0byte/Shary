@@ -103,11 +103,19 @@
     <string name="new_grades">Nieuwe cijfers</string>
     <string name="grades">Cijfers</string>
 
-    <string name="hello_blank_fragment">UAGSGuyF%DF</string>
     <string name="no_new_grades">Geen nieuwe cijfers</string>
     <string name="no_lessons">Geen lessen</string>
     <string name="loading">Laden...</string>
     <string name="please_wait">Een moment geduld</string>
     <string name="choose_a_grade_period">Kies een cijferperiode</string>
     <string name="subjects_coming_soon">Cijfers van vakken bekijken kan binnenkort!</string>
+    <string name="about_title">Over Shary</string>
+    <string name="donate">Doneren</string>
+
+    <string name="aboutLibraries_description_showIcon">true</string>
+    <string name="aboutLibraries_description_showVersion">true</string>
+    <string name="aboutLibraries_description_text">Shary - Deel je Magister account veilig en gemakkelijk.</string>
+    <string name="website">Website</string>
+    <string name="responsible_disclosure_short">Responsible Disclosure</string>
+    <string name="additional_info">Aanvullende Info</string>
 </resources>
