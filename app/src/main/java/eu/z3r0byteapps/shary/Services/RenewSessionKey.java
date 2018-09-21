@@ -101,6 +101,9 @@ public class RenewSessionKey extends JobService {
         try {
             InputStreamReader inputStreamReader = HttpUtil.httpPost(Urls.createUser, new Gson().toJson(user));
             Result result = new Gson().fromJson(LogUtil.getStringFromInputStream(inputStreamReader), Result.class);
+            if (result.error == null) {
+                configUtil.setString("sessionId", sessionid);
+            }
             return true;
         } catch (IOException e) {
             e.printStackTrace();

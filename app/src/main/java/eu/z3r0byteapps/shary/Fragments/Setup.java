@@ -162,7 +162,12 @@ public class Setup extends SlideFragment {
         try {
             InputStreamReader inputStreamReader = HttpUtil.httpPost(Urls.createUser, new Gson().toJson(user));
             Result result = new Gson().fromJson(LogUtil.getStringFromInputStream(inputStreamReader), Result.class);
-            return result.error == null;
+            if (result.error == null) {
+                configUtil.setString("sessionId", sessionid);
+                return true;
+            } else {
+                return false;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return false;
