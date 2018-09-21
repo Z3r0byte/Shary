@@ -118,4 +118,6 @@
     <string name="website">Website</string>
     <string name="responsible_disclosure_short">Responsible Disclosure</string>
     <string name="additional_info">Aanvullende Info</string>
+    <string name="logout_session">Sessie uitloggen</string>
+    <string name="logged_out">Uitgelogd</string>
 </resources>

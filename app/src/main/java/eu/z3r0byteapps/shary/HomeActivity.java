@@ -19,10 +19,14 @@ package eu.z3r0byteapps.shary;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.mikepenz.aboutlibraries.Libs;
@@ -69,6 +73,7 @@ public class HomeActivity extends AppCompatActivity {
         final PrimaryDrawerItem shareItem = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.share).withSetSelected(true);
         final PrimaryDrawerItem sharedItem = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.shared_with_me);
         final PrimaryDrawerItem aboutItem = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.about_title).withSelectable(false);
+        final PrimaryDrawerItem logoutItem = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.logout_session).withSelectable(false);
         final PrimaryDrawerItem donateItem = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.donate).withSelectable(false);
         final PrimaryDrawerItem websiteItem = new PrimaryDrawerItem().withIdentifier(6).withName(R.string.website).withSelectable(false);
         final PrimaryDrawerItem responsibleDisclosureItem = new PrimaryDrawerItem().withIdentifier(7).withName(R.string.responsible_disclosure_short).withSelectable(false);
@@ -83,12 +88,13 @@ public class HomeActivity extends AppCompatActivity {
                         sharedItem,
                         new DividerDrawerItem(),
                         aboutItem,
+                        logoutItem,
                         new SectionDrawerItem().withName(R.string.additional_info),
                         websiteItem,
                         responsibleDisclosureItem,
                         privacyItem
                 )
-                .withSelectedItem(2)
+                .withSelectedItem(1)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -103,6 +109,8 @@ public class HomeActivity extends AppCompatActivity {
                             new LibsBuilder()
                                     .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
                                     .start(HomeActivity.this);
+                        } else if (drawerItem == logoutItem) {
+                            destroySession();
                         } else if (drawerItem == websiteItem) {
                             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://shary.z3r0byteapps.eu/"));
                             startActivity(browserIntent);
@@ -123,6 +131,64 @@ public class HomeActivity extends AppCompatActivity {
 
         configUtil = new ConfigUtil(this);
         if (configUtil.getBoolean("loggedIn", false)) updateSession();
+    }
+
+    private void destroySession() {
+        new MaterialDialog.Builder(this)
+                .title("Sessie uitloggen")
+                .content("Als je uitlogt trek je de toegang van Shary tot je Magister account in en kan niemand meer je shares bekijken totdat je opnieuw inlogt. Je kunt nog wel de shares van anderen bekijken.")
+                .positiveText("Uitloggen")
+                .negativeText("Annuleren")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Magister magister = login();
+                                if (magister == null) {
+                                    return;
+                                }
+                                String profile = getProfile(magister);
+                                if (profile == null) {
+                                    return;
+                                }
+                                Integer personID = magister.profile.id;
+                                String token = generateToken(profile);
+                                Boolean success = createUser(token, HttpUtil.getSessionToken(), personID);
+                                if (success) {
+                                    try {
+                                        HttpUtil.httpDelete(magister.schoolUrl.getCurrentSessionUrl());
+                                    } catch (IOException e) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(HomeActivity.this, R.string.err_no_connection, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+                                    configUtil.setBoolean("loggedIn", false);
+                                    configUtil.setString("School", null);
+                                    configUtil.setString("User", null);
+                                    configUtil.setString("Profile", null);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(HomeActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } else {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(HomeActivity.this, "Kon niet uitloggen, probeer het later opnieuw", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }).start();
+                    }
+                }).show();
     }
 
     private void updateSession() {

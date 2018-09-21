@@ -51,14 +51,20 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import eu.z3r0byteapps.shary.Adapters.ShareAdapter;
+import eu.z3r0byteapps.shary.MagisterLibrary.Magister;
+import eu.z3r0byteapps.shary.MagisterLibrary.container.School;
+import eu.z3r0byteapps.shary.MagisterLibrary.container.User;
 import eu.z3r0byteapps.shary.MagisterLibrary.util.HttpUtil;
 import eu.z3r0byteapps.shary.MagisterLibrary.util.LogUtil;
+import eu.z3r0byteapps.shary.MagisterLibrary.util.SchoolUrl;
 import eu.z3r0byteapps.shary.SharyLibrary.Result;
 import eu.z3r0byteapps.shary.SharyLibrary.Share;
 import eu.z3r0byteapps.shary.SharyLibrary.ShareType;
@@ -119,6 +125,7 @@ public class ShareActivity extends AppCompatActivity implements DatePickerDialog
         final PrimaryDrawerItem shareItem = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.share).withSetSelected(true);
         final PrimaryDrawerItem sharedItem = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.shared_with_me);
         final PrimaryDrawerItem aboutItem = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.about_title).withSelectable(false);
+        final PrimaryDrawerItem logoutItem = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.logout_session).withSelectable(false);
         final PrimaryDrawerItem donateItem = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.donate).withSelectable(false);
         final PrimaryDrawerItem websiteItem = new PrimaryDrawerItem().withIdentifier(6).withName(R.string.website).withSelectable(false);
         final PrimaryDrawerItem responsibleDisclosureItem = new PrimaryDrawerItem().withIdentifier(7).withName(R.string.responsible_disclosure_short).withSelectable(false);
@@ -133,6 +140,7 @@ public class ShareActivity extends AppCompatActivity implements DatePickerDialog
                         sharedItem,
                         new DividerDrawerItem(),
                         aboutItem,
+                        logoutItem,
                         new SectionDrawerItem().withName(R.string.additional_info),
                         websiteItem,
                         responsibleDisclosureItem,
@@ -154,6 +162,8 @@ public class ShareActivity extends AppCompatActivity implements DatePickerDialog
                             new LibsBuilder()
                                     .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
                                     .start(ShareActivity.this);
+                        } else if (drawerItem == logoutItem) {
+                            destroySession();
                         } else if (drawerItem == websiteItem) {
                             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://shary.z3r0byteapps.eu/"));
                             startActivity(browserIntent);
@@ -178,6 +188,121 @@ public class ShareActivity extends AppCompatActivity implements DatePickerDialog
         });
 
         setup();
+    }
+
+    private void destroySession() {
+        new MaterialDialog.Builder(this)
+                .title("Sessie uitloggen")
+                .content("Als je uitlogt trek je de toegang van Shary tot je Magister account in en kan niemand meer je shares bekijken totdat je opnieuw inlogt. Je kunt nog wel de shares van anderen bekijken.")
+                .positiveText("Uitloggen")
+                .negativeText("Annuleren")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Magister magister = login();
+                                if (magister == null) {
+                                    return;
+                                }
+                                String profile = getProfile(magister);
+                                if (profile == null) {
+                                    return;
+                                }
+                                Integer personID = magister.profile.id;
+                                String token = generateToken(profile);
+                                Boolean success = createUser(token, HttpUtil.getSessionToken(), personID);
+                                if (success) {
+                                    try {
+                                        HttpUtil.httpDelete(magister.schoolUrl.getCurrentSessionUrl());
+                                    } catch (IOException e) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(ShareActivity.this, R.string.err_no_connection, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+                                    configUtil.setBoolean("loggedIn", false);
+                                    configUtil.setString("School", null);
+                                    configUtil.setString("User", null);
+                                    configUtil.setString("Profile", null);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(ShareActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                    startActivity(new Intent(ShareActivity.this, ShareActivity.class));
+                                    finish();
+                                } else {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(ShareActivity.this, "Kon niet uitloggen, probeer het later opnieuw", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }).start();
+                    }
+                }).show();
+    }
+
+    private Boolean createUser(String token, String sessionid, Integer personID) {
+        School school = new Gson().fromJson(configUtil.getString("School"), School.class);
+        String schoolPrefix = school.url.substring(8, school.url.indexOf("."));
+        eu.z3r0byteapps.shary.SharyLibrary.User user = new eu.z3r0byteapps.shary.SharyLibrary.User(sessionid, token, personID, schoolPrefix);
+        try {
+            InputStreamReader inputStreamReader = HttpUtil.httpPost(Urls.createUser, new Gson().toJson(user));
+            Result result = new Gson().fromJson(LogUtil.getStringFromInputStream(inputStreamReader), Result.class);
+            if (result.error == null) {
+                configUtil.setString("sessionId", sessionid);
+            }
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private Magister login() {
+        School school = new Gson().fromJson(configUtil.getString("School"), School.class);
+        User user = new Gson().fromJson(configUtil.getString("User"), User.class);
+        try {
+            return Magister.login(school, user.username, user.password);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private String getProfile(Magister magister) {
+        SchoolUrl url = new SchoolUrl(magister.school);
+        try {
+            return LogUtil.getStringFromInputStream(HttpUtil.httpGet(url.getAccountUrl()));
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private String generateToken(String profile) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(profile.getBytes("UTF-8"));
+            StringBuffer hexString = new StringBuffer();
+
+            for (int i = 0; i < hash.length; i++) {
+                String hex = Integer.toHexString(0xff & hash[i]);
+                if (hex.length() == 1)
+                    hexString.append('0');
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private void setup() {
