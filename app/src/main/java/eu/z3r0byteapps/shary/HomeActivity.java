@@ -134,6 +134,10 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void destroySession() {
+        if (!configUtil.getBoolean("loggedIn", false)) {
+            Toast.makeText(this, "Je bent niet ingelogd", Toast.LENGTH_SHORT).show();
+            return;
+        }
         new MaterialDialog.Builder(this)
                 .title("Sessie uitloggen")
                 .content("Als je uitlogt trek je de toegang van Shary tot je Magister account in en kan niemand meer je shares bekijken totdat je opnieuw inlogt. Je kunt nog wel de shares van anderen bekijken.")
